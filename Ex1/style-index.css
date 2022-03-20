@@ -1,0 +1,145 @@
+body {
+  background-color: rgb(231, 231, 231);
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  height: 3em;
+  align-items: stretch;
+}
+
+img {
+  margin: 5px;
+}
+
+#search {
+  display: flex;
+  flex: 1;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: white;
+}
+
+#search img {
+  width: 3rem;
+}
+
+#access {
+  display: flex;
+  flex: 2;
+  position: relative;
+  background-color: white;
+}
+
+#access nav {
+  flex: 2;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: white;
+}
+main {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  top: 1rem;
+}
+
+#central {
+  width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+#central #news {
+  position: relative;
+  top: 2rem;
+  padding: 1rem;
+  background-color: white;
+}
+
+.publication {
+  margin: 1rem 0rem;
+  padding-bottom: 2rem;
+}
+
+.post-img {
+  position: relative;
+}
+
+.header-post {
+  display: flex;
+  border-bottom: 2px solid rgb(216, 215, 215);
+  flex-direction: row;
+}
+.header-post img {
+  margin-right: 3rem;
+  width: 3rem;
+  height: 3rem;
+}
+
+.footer-post {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 2rem;
+}
+#top {
+  margin: 1rem;
+}
+
+#top #post {
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+#top #post img {
+  flex: 1;
+  margin: 0 2rem;
+}
+
+#top #post form {
+  flex: 10;
+  position: relative;
+}
+
+#top nav {
+  flex: 1;
+  position: relative;
+  top: 5px;
+  justify-content: space-evenly;
+  align-items: stretch;
+
+  display: flex;
+}
+
+#left {
+  width: 30rem;
+  background-color: white;
+  margin: 1rem;
+}
+
+#right {
+  margin: 1rem;
+  width: 30rem;
+  background-color: white;
+}
+
+#post-button {
+  background-color: blue;
+  color: white;
+  font-weight: bold;
+}
