@@ -326,7 +326,10 @@ class Poker {
 }
 
 let poker = new Poker(3, 100, 10, 5);
-poker.start();
+
+//poker.start();
+
+module.exports = Poker;
 
 /* 
 
@@ -365,4 +368,24 @@ document.querySelector("#app").innerHTML = `
   <p>${deck_poker}</p>
   <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
 `;
+ */
+/* 
+const playerList = document.getElementById("list-players");
+
+const renderPlayer = (player) => {
+  const li = document.createElement("li");
+  const form = document.createElement("form");
+
+  const span = document.createElement("span");
+  span.textContent = player.name;
+
+  li.append(span);
+  return li;
+};
+const render = () => {
+  for (let p of poker.listPlayers) {
+    playerList.appendChild(renderPlayer(p));
+  }
+};
+render();
  */
