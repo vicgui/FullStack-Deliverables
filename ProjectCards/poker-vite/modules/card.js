@@ -41,8 +41,5 @@ class Card {
     return this.face + this.compSuit;
   }
 }
-/* 
-let c = new Card("clubs", "2");
-console.log(c.compString);
- */
+
 export { Card };

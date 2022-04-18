@@ -98,42 +98,5 @@ class Player {
     this._playing = false;
   }
 }
-/* 
 
-let p = new Player("vic", 100);
-let p1 = new Player("hec", 123);
-let ps = [p, p1];
-
-let d = new Deck();
-
-let c = new Card("hearts", "A");
-let c1 = new Card("spades", "A");
-let c2 = new Card("clubs", "10");
-let c3 = new Card("diamonds", "10");
-let c4 = new Card("spades", "10");
-for (let pl of ps) {
-  pl.addCardsToHand(c);
-  pl.addCardsToHand(c1);
-  pl.addCardsToHand(c2);
-  pl.addCardsToHand(c3);
-  pl.addCardsToHand(c4);
-}
-for (let pl of ps) {
-  console.log(`${pl.playerStatus}`);
-}
-
-p.bet(200);
-console.log(p.playerStatus);
-
-console.log(p.hand);
-
-const hand1 = "AH AS TC TD TS ";
-
-console.log(p.compareHand);
-console.log(hand1);
-
-import { getHandRank } from "./cardsComparison.js";
-console.log(getHandRank(p.compareHand));
-console.log(getHandRank(hand1));
- */
 export { Player };

@@ -5,7 +5,7 @@ import { Dealer } from "./modules/dealer.js";
 import { getHandRank } from "./modules/cardsComparison.js";
 import readlineSync from "readline-sync";
 
-class Poker {
+class TexasPoker {
   constructor(numPlayers, coinsPlayer, bigBlind, smallBlind) {
     this.numPlayers = numPlayers;
     this.playersStatus = [];
@@ -113,13 +113,13 @@ class Poker {
 
   askForDecision(player) {
     let playerDecision = readlineSync.question(
-      `Give ${player.name} decision: `
+      `${player.name} decision:(check, call, bet, fold) `
     );
     console.log(`${player.name} decision: ${playerDecision}`);
     let quantityToBet = 0;
 
     if (playerDecision == "bet") {
-      quantityToBet = readlineSync.question(`Quantity to bet: `);
+      quantityToBet = readlineSync.question(` Quantity to bet: `);
       if (!this.coinsEnough(parseInt(quantityToBet), player.coins)) {
         console.log("No coins enough to bet");
       } else {
@@ -128,13 +128,17 @@ class Poker {
       }
     } else if (playerDecision == "call") {
       let maxBetOnTable = this.getMaximumBetInTable();
-      quantityToBet = maxBetOnTable - player.getBetCoins;
-      console.log(
-        `quant to equal ${maxBetOnTable}. player coins: ${player.getBetCoins}`
-      );
-      let str_ToBet = String(quantityToBet);
-      eval("player." + playerDecision + "(" + str_ToBet + ")");
-      this.coinsOnTable += quantityToBet;
+      if (player.coins <= maxBetOnTable) {
+        quantityToBet = player.coins;
+        player.bet(quantityToBet);
+        this.coinsOnTable += quantityToBet;
+      } else {
+        quantityToBet = maxBetOnTable - player.getBetCoins;
+        console.log(`quant to equal ${maxBetOnTable}`);
+        let str_ToBet = String(quantityToBet);
+        eval("player." + playerDecision + "(" + str_ToBet + ")");
+        this.coinsOnTable += quantityToBet;
+      }
     } else if (playerDecision == "check") {
       let maxBetOnTable = this.getMaximumBetInTable();
       if (maxBetOnTable == player.getBetCoins) {
@@ -146,8 +150,6 @@ class Poker {
       }
     } else if (playerDecision == "fold") {
       eval("player." + playerDecision + "()");
-      const index = this.listPlayers.indexOf(player);
-      //this.listPlayers.splice(index, 1);
     } else {
       console.log("Invalid decision");
     }
@@ -156,13 +158,6 @@ class Poker {
   playRound(firstToBet) {
     let offset = firstToBet;
     for (let i = 0; i < this.playersInGame.length; i++) {
-      if (this.playersInGame[i].coins == 0 && this.coinsOnTable == 0) {
-        //delete player from game
-        //let index = this.listPlayers.indexOf(this.playersInGame[i]);
-        //this.listPlayers.splice(index, 1);
-        //delete this.listPlayers[index];
-        //console.log(`Player ${this.playersInGame[i].name} deleted`);
-      }
       let pointer = (i + offset) % this.playersInGame.length;
       console.log(`Player to bet: ${this.playersInGame[pointer].name}`);
       this.askForDecision(this.playersInGame[pointer]);
@@ -186,7 +181,6 @@ class Poker {
     let maxRounds = 3;
     let round = 1;
 
-    //meter la condicion de los winners en el while
     while (
       !this.listOfBets.every((val, i, arr) => val === arr[0]) ||
       round <= maxRounds
@@ -438,36 +432,11 @@ class Poker {
   }
 }
 
-let poker = new Poker(3, 100, 10, 5);
+let poker = new TexasPoker(3, 100, 10, 5);
 
 poker.play();
 
-export { Poker };
-
-/* 
-
-console.log("Initial Status:");
-console.log(poker.status);
-
-poker.payBlinds();
-
-console.log("After paying blinds");
-console.log(poker.status);
-
-poker.giveTwoCards();
-console.log(poker.status);
-
-poker.startPreFlop();
-
-poker.startFlop();
-
-poker.startTurn();
-
-poker.startRiver();
-
-poker.showDown();
-
- */
+export { TexasPoker };
 
 /* 
 
@@ -481,24 +450,4 @@ document.querySelector("#app").innerHTML = `
   <p>${deck_poker}</p>
   <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
 `;
- */
-/* 
-const playerList = document.getElementById("list-players");
-
-const renderPlayer = (player) => {
-  const li = document.createElement("li");
-  const form = document.createElement("form");
-
-  const span = document.createElement("span");
-  span.textContent = player.name;
-
-  li.append(span);
-  return li;
-};
-const render = () => {
-  for (let p of poker.listPlayers) {
-    playerList.appendChild(renderPlayer(p));
-  }
-};
-render();
  */
