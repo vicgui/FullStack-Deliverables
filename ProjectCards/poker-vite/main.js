@@ -204,6 +204,7 @@ class Poker {
   }
   showCard() {
     let c = this._deck.deckList.pop();
+    c.visible = true;
     for (let p of this.listPlayers) {
       p.addCardsToHand(c);
     }

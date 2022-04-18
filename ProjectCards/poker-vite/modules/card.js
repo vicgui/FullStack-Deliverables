@@ -6,12 +6,16 @@ class Card {
     this.face;
     this._compString = "";
     this.convertCardToComparable();
+    this.visibleToOthers = false;
   }
   get cardSuitRank() {
-    return `${this.rank} of ${this.suit}`;
+    return `${this.rank} of ${this.suit} (${this.visibleToOthers})`;
   }
   get compString() {
     return this._compString;
+  }
+  set visible(v) {
+    this.visibleToOthers = v;
   }
   convertCardToComparable() {
     if (this.suit == "clubs") {
