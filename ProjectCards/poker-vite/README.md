@@ -17,3 +17,5 @@ let poker = new TexasPoker(3, 100, 10, 5);
 
 poker.play();
 ```
+After this method is launched, the console asks for decision for each player, and the decisions can be check, fold, bet and call. 
+These mehtods are defined in the module player.js (./module/player.js).
