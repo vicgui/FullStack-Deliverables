@@ -10,6 +10,10 @@ class Player {
     this._betCoins = 0;
     this._comparableHand = "";
     this._handRank;
+    this._playing = true;
+  }
+  get playing() {
+    return this._playing;
   }
   get name() {
     return this._name;
@@ -37,7 +41,7 @@ class Player {
     let handStatus = this._hand.map(function (card) {
       return card.cardSuitRank;
     });
-    return `Name: ${this._name} | Dealer: ${this._dealer}  | Hand: ${handStatus} (${this.compareHand}) | Coins: ${this._coins} | Bet coins: ${this._betCoins}`;
+    return `Name: ${this._name} | Dealer: ${this._dealer}  | Hand: ${handStatus} (${this.compareHand}) | Coins: ${this._coins} | Bet coins: ${this._betCoins} | Playing: ${this.playing}`;
   }
   set hand(newCards) {
     this._hand = newCards;
@@ -47,6 +51,9 @@ class Player {
   }
   set dealer(d) {
     this._dealer = d;
+  }
+  set setPlaying(playing) {
+    this._playing = playing;
   }
   set betCoins(coins) {
     this._betCoins = coins;
@@ -88,6 +95,7 @@ class Player {
   }
   fold() {
     this._hand = [];
+    this._playing = false;
   }
 }
 /* 

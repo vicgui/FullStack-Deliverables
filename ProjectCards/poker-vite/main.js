@@ -19,6 +19,9 @@ class Poker {
     this.coinsOnTable = 0;
     this._cardsOnTable = [];
     this._listOfBets = [];
+    this._winner = "";
+    this._pokerWinner = "";
+    this.listPlayersInGame = [];
   }
   setListOfBets() {
     let listBets = [];
@@ -42,12 +45,12 @@ class Poker {
     }
   }
   coinsEnough(toPay, pCoins) {
-    return toPay < pCoins;
+    return toPay <= pCoins;
   }
 
   giveTwoCards() {
     console.log("########## Deal the cards ##########");
-    for (let pl of this.listPlayers) {
+    for (let pl of this.playersInGame) {
       let c1 = this._deck.deckList.pop();
       let c2 = this._deck.deckList.pop();
       let cards = [c1, c2];
@@ -65,12 +68,17 @@ class Poker {
   }
 
   payBlinds() {
+    this.listPlayers = this.listPlayers.filter((player) => {
+      return player.coins !== 0;
+    });
+
     let indexDealer = this.listPlayers.findIndex((player) => {
       return player.dealer === true;
     });
 
     let bigBlindIndex = this.getNextPlayerIndex(indexDealer);
     let smallBlindIndex = this.getNextPlayerIndex(bigBlindIndex);
+
     for (let p of this.listPlayers) {
       let blindToPay = 0;
       if (this.listPlayers.indexOf(p) == bigBlindIndex) {
@@ -83,7 +91,7 @@ class Poker {
 
       if (!this.coinsEnough(blindToPay, p.coins)) {
         let index = this.listPlayers.indexOf(p);
-        delete this.listPlayers[index];
+        this.listPlayers.splice(index, 1);
         console.log(`Player: ${p.name} has no coins to continue. Eliminated`);
       } else {
         p.setCoins = p.coins - blindToPay;
@@ -139,7 +147,7 @@ class Poker {
     } else if (playerDecision == "fold") {
       eval("player." + playerDecision + "()");
       const index = this.listPlayers.indexOf(player);
-      this.listPlayers.splice(index, 1);
+      //this.listPlayers.splice(index, 1);
     } else {
       console.log("Invalid decision");
     }
@@ -147,10 +155,26 @@ class Poker {
 
   playRound(firstToBet) {
     let offset = firstToBet;
-    for (let i = 0; i < this.listPlayers.length; i++) {
-      let pointer = (i + offset) % this.listPlayers.length;
-      console.log(`Player to bet: ${this.listPlayers[pointer].name}`);
-      this.askForDecision(this.listPlayers[pointer]);
+    for (let i = 0; i < this.playersInGame.length; i++) {
+      if (this.playersInGame[i].coins == 0 && this.coinsOnTable == 0) {
+        //delete player from game
+        //let index = this.listPlayers.indexOf(this.playersInGame[i]);
+        //this.listPlayers.splice(index, 1);
+        //delete this.listPlayers[index];
+        //console.log(`Player ${this.playersInGame[i].name} deleted`);
+      }
+      let pointer = (i + offset) % this.playersInGame.length;
+      console.log(`Player to bet: ${this.playersInGame[pointer].name}`);
+      this.askForDecision(this.playersInGame[pointer]);
+    }
+    this.checkPokerWinner();
+  }
+  checkIfWinner() {
+    if (this.playersInGame.length == 1) {
+      this.setWinner(this.playersInGame[0]);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -162,10 +186,14 @@ class Poker {
     let maxRounds = 3;
     let round = 1;
 
+    //meter la condicion de los winners en el while
     while (
       !this.listOfBets.every((val, i, arr) => val === arr[0]) ||
       round <= maxRounds
     ) {
+      if (this.checkIfWinner()) {
+        break;
+      }
       console.log(`ROUND ${round}`);
       let firstToBetIndex = this.getNextPlayerIndex(indexbigBlind);
       this.playRound(firstToBetIndex);
@@ -197,6 +225,9 @@ class Poker {
       !this.listOfBets.every((val, i, arr) => val === arr[0]) ||
       round <= maxRounds
     ) {
+      if (this.checkIfWinner()) {
+        break;
+      }
       console.log(`ROUND ${round}`);
       let firstToBetIndex = this.getNextPlayerIndex(indexDealer);
       this.playRound(firstToBetIndex);
@@ -204,7 +235,7 @@ class Poker {
       console.log(this.listOfBets);
       round += 1;
     }
-    console.log("####### ENDING OF PRE FLOP PHASE #######");
+    console.log("####### ENDING OF FLOP PHASE #######");
   }
 
   startTurn() {
@@ -222,6 +253,9 @@ class Poker {
       !this.listOfBets.every((val, i, arr) => val === arr[0]) ||
       round <= maxRounds
     ) {
+      if (this.checkIfWinner()) {
+        break;
+      }
       console.log(`ROUND ${round}`);
       let firstToBetIndex = this.getNextPlayerIndex(indexDealer);
       this.playRound(firstToBetIndex);
@@ -245,6 +279,9 @@ class Poker {
       round < 1 ||
       (round >= 1 && this.listOfBets.every((val, i, arr) => val != arr[0]))
     ) {
+      if (this.checkIfWinner()) {
+        break;
+      }
       console.log(`ROUND ${round}`);
       let firstToBetIndex = this.getNextPlayerIndex(indexDealer);
       this.playRound(firstToBetIndex);
@@ -254,7 +291,7 @@ class Poker {
   }
   showDown() {
     let listRanks = [];
-    for (let p of this.listPlayers) {
+    for (let p of this.playersInGame) {
       console.log(p.compareHand);
       const rank = getHandRank(p.compareHand);
       p.handRank = rank;
@@ -262,28 +299,87 @@ class Poker {
     }
     console.log(listRanks);
     const minRank = Math.min(...listRanks);
-    const winnerIndex = this.listPlayers.findIndex((player) => {
+    const winnerIndex = this.playersInGame.findIndex((player) => {
       return player.getHandRank === minRank;
     });
-    console.log(
-      `Winner is ${this.listPlayers[winnerIndex].name}, with rank ${minRank}`
-    );
+    this.setWinner(this.playersInGame[winnerIndex]);
+  }
+  setWinner(winner) {
+    this._winner = winner;
+    winner.addCoins(this.coinsOnTable);
+    this.coinsOnTable = 0;
+
+    console.log(`Round Winner is ${winner.name}`);
+
+    this.listPlayers.forEach(function (player) {
+      player.betCoins = 0;
+      player.hand = [];
+    });
+    this._cardsOnTable = [];
+    this._deck = new Deck();
+    this.dealer = new Dealer(this._deck.deckList);
+    console.log(this.status);
+  }
+
+  play() {
+    while (this._pokerWinner === "") {
+      this._winner = "";
+      this.start();
+      if (this.checkPokerWinner()) {
+        break;
+      }
+    }
   }
 
   start() {
-    this.payBlinds();
+    this.listPlayers = this.listPlayers.filter((player) => {
+      return player.coins !== 0;
+    });
+    this.checkPokerWinner();
 
-    this.giveTwoCards();
+    while (this._winner === "" && this._pokerWinner === "") {
+      this.listPlayers.forEach(function (player) {
+        if (player.coins > 0) {
+          player.setPlaying = true;
+        }
+      });
 
-    this.startPreFlop();
+      this.payBlinds();
 
-    this.startFlop();
+      this.giveTwoCards();
 
-    this.startTurn();
+      this.startPreFlop();
 
-    this.startRiver();
+      if (this.checkIfWinner()) {
+        break;
+      }
 
-    this.showDown();
+      this.startFlop();
+      if (this.checkIfWinner()) {
+        break;
+      }
+
+      this.startTurn();
+      if (this.checkIfWinner()) {
+        break;
+      }
+
+      this.startRiver();
+      if (this.checkIfWinner()) {
+        break;
+      }
+
+      this.showDown();
+    }
+  }
+  checkPokerWinner() {
+    if (this.listPlayers.length == 1) {
+      this._pokerWinner = this.listPlayers[0];
+      console.log(`POKER WINNER is ${this._pokerWinner.name}`);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   getNextPlayerIndex(index) {
@@ -292,6 +388,19 @@ class Poker {
     } else {
       return index + 1;
     }
+  }
+  getPlayersInGame() {
+    let playersInGame = [];
+    for (let p of this.listPlayers) {
+      if (p.playing == true) {
+        playersInGame.push(p);
+      }
+      this.listPlayersInGame = playersInGame;
+    }
+  }
+  get playersInGame() {
+    this.getPlayersInGame();
+    return this.listPlayersInGame;
   }
 
   get players() {
@@ -303,6 +412,9 @@ class Poker {
       this.players,
       `Coins on the table: ${this.coinsTable}, Cards on table: ${this.cardsOnTableStatus}`,
     ];
+  }
+  get winner() {
+    return this._winner;
   }
 
   get coinsTable() {
@@ -327,9 +439,9 @@ class Poker {
 
 let poker = new Poker(3, 100, 10, 5);
 
-//poker.start();
+poker.play();
 
-module.exports = Poker;
+export { Poker };
 
 /* 
 
